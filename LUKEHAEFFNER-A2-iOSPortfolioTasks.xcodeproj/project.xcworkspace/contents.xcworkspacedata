@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:LUKEHAEFFNER-A2-iOSPortfolioTasks.xcodeproj">
+      location = "group:/Users/lukehaeffner/University/FIT3178/LUKEHAEFFNER-A2-iOSPortfolioTasks/LUKEHAEFFNER-A2-iOSPortfolioTasks/Cocktail.swift">
+   </FileRef>
+   <FileRef
+      location = "self:">
    </FileRef>
 </Workspace>
