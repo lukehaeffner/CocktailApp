@@ -8,51 +8,120 @@
 
 import UIKit
 
-class SearchDrinksTableViewController: UITableViewController,UISearchResultsUpdating , addCocktailDelegate {
+class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate , DatabaseListener {
+    func onNameChange(change: DatabaseChange, cocktail: Cocktail) {
+        // do nothing
+    }
+    
+    func onMyCocktailsChange(change: DatabaseChange, myCocktails: [Cocktail]) {
+//
+    }
+    
+    func onIngredientsChange(change: DatabaseChange, ingredients: [Ingredient]) {
+        // do nothing
+    }
+    
+    func onIngredientMeasurementChange(change: DatabaseChange, ingredients: [IngredientMeasurement]) {
+        // do nothing
+    }
 
     let CELL_DRINK = "drinkCell"
     let CELL_RESULTS = "drinkCountCell"
 
     let SECTION_DRINK = 0
     let SECTION_INFO = 1
-    var allDrinks: [Cocktail] = []
-    var filteredDrinks: [Cocktail] = []
-    weak var cocktailDelegate: addCocktailDelegate?
-    
+    var indicator = UIActivityIndicatorView()
+
+    weak var databaseController: DatabaseProtocol?
+    var listenerType: ListenerType = .all
+    var newDrinks = [DrinkData]()
+    let REQUEST_STRING = "https://www.thecocktaildb.com/api/json/v1/1/search.php?s="
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        createTemplateDrinks()
-        filteredDrinks = allDrinks
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        databaseController = appDelegate.databaseController
         let searchController = UISearchController(searchResultsController: nil)
-        searchController.searchResultsUpdater = self
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search Cocktails"
-        navigationItem.searchController = searchController
-         definesPresentationContext = true
+           searchController.searchBar.delegate = self
+           searchController.obscuresBackgroundDuringPresentation = false
+           searchController.searchBar.placeholder = "Find drink"
+           navigationItem.searchController = searchController
+           // Make sure search bar is always visible.
+           navigationItem.hidesSearchBarWhenScrolling = false
+
+           // This view controller decides how the search controller is presented.
+           definesPresentationContext = true
+
+           // Create a loading animation
+           indicator.style = UIActivityIndicatorView.Style.medium
+           indicator.center = self.tableView.center
+           self.view.addSubview(indicator)
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        databaseController?.addListener(listener: self)
+    }
 
-    // MARK: - Search Bar Stuff
-    func updateSearchResults(for searchController: UISearchController) {
-        guard let searchText = searchController.searchBar.text?.lowercased() else {
-            return
-        }
-        if searchText.count > 0 {
-            filteredDrinks = allDrinks.filter({ (drink: Cocktail) -> Bool in
-                return drink.name!.lowercased().contains(searchText)
-            })
-        }
-        else {
-            filteredDrinks = allDrinks
-        }
-        tableView.reloadData()
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        databaseController?.removeListener(listener: self)
     }
     
+    
+    //MARK: Search Bar Delegate
+     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+         // If there is no text end immediately
+         guard let searchText = searchBar.text, searchText.count > 0 else {
+             return;
+         }
+
+         indicator.startAnimating()
+         indicator.backgroundColor = UIColor.clear
+
+         newDrinks.removeAll()
+         tableView.reloadData()
+         URLSession.shared.invalidateAndCancel()
+         requestDrinks(drinkName: searchText)
+     }
+    
+    // MARK: - API Request
+    
+    func requestDrinks(drinkName: String) {
+        let searchString = REQUEST_STRING + drinkName
+        
+        let jsonURL = URL(string: searchString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
+        
+        let task = URLSession.shared.dataTask(with: jsonURL!){(data, response, error) in
+            DispatchQueue.main.async{
+                self.indicator.stopAnimating()
+                self.indicator.hidesWhenStopped = true
+            }
+            
+            if let error = error {
+                print(error)
+                return
+            }
+            do {
+                let decoder = JSONDecoder()
+                let volumeData = try decoder.decode(VolumeData.self, from: data!)
+
+                if let books = volumeData.books {
+                    self.newDrinks.append(contentsOf: books)
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                }
+            } catch let err {
+                print(err)
+            }
+        }
+        task.resume()
+    }
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -62,9 +131,9 @@ class SearchDrinksTableViewController: UITableViewController,UISearchResultsUpda
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
             case SECTION_DRINK:
-                return filteredDrinks.count
+                return newDrinks.count
             case SECTION_INFO:
-                if filteredDrinks.count > 0 {
+                if newDrinks.count > 0 {
                     return 0
                 }
                 return 1
@@ -77,12 +146,9 @@ class SearchDrinksTableViewController: UITableViewController,UISearchResultsUpda
     
     // this is the drink cells
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        
         if indexPath.section == SECTION_DRINK {
             let drinkCell = tableView.dequeueReusableCell(withIdentifier: CELL_DRINK, for: indexPath) as! MyDrinksTableViewCell
-            
-            let drink = filteredDrinks[indexPath.row]
+            let drink = newDrinks[indexPath.row]
             drinkCell.drinkLabel.text = drink.name
             drinkCell.ingredientsLabel.text = drink.instructions
             return drinkCell
@@ -100,14 +166,23 @@ class SearchDrinksTableViewController: UITableViewController,UISearchResultsUpda
             tableView.deselectRow(at: indexPath, animated: false)
             return
         }
-
-            
-        if cocktailDelegate?.addCocktail(newCocktail: allDrinks[indexPath.row]) ?? false {
-            navigationController?.popViewController(animated: false)
-            return
+        
+        let cocktail = databaseController?.addCocktail(name: newDrinks[indexPath.row].name, instructions: newDrinks[indexPath.row].instructions)
+        let ingredients = newDrinks[indexPath.row].ingredients
+        let measurements = newDrinks[indexPath.row].ingredientMeasurement
+        for n in 0...newDrinks[indexPath.row].ingredientMeasurement.count - 1 {
+            let _ = databaseController?.addIngredientMeasurement(cocktail: cocktail!, ingredientName: ingredients[n], measurement: measurements[n])
         }
+        
+        navigationController?.popViewController(animated: false)
+        return
+   
+//        if databaseController?.addCocktail(name: newDrinks[indexPath.row].name, instructions: newDrinks[indexPath.row].instructions) != nil {
+//            navigationController?.popViewController(animated: false)
+//            return
+//        }
 
-        tableView.deselectRow(at: indexPath, animated: true)
+//        tableView.deselectRow(at: indexPath, animated: true)
     }
 
     /*
@@ -155,19 +230,4 @@ class SearchDrinksTableViewController: UITableViewController,UISearchResultsUpda
     }
     */
     
-    func addCocktail(newCocktail: Cocktail) -> Bool {
-        allDrinks.append(newCocktail)
-        filteredDrinks.append(newCocktail)
-        tableView.beginUpdates()
-        tableView.insertRows(at: [IndexPath(row: filteredDrinks.count - 1, section: 0)], with: .automatic)
-        tableView.endUpdates()
-        tableView.reloadSections([SECTION_INFO], with: .automatic)
-        return true
-    }
-
-    func createTemplateDrinks() {
-        allDrinks.append(Cocktail(name: "Bloody Mary", instructions: "This is a test set of instructions", ingredients: [IngredientMeasurement(name: "Cherry", quantity: "Two"), IngredientMeasurement(name: "Berry", quantity: "Four")]))
-        allDrinks.append(Cocktail(name: "Old Fashioned", instructions: "This is a another set of example instructions", ingredients: [IngredientMeasurement(name: "Cherry", quantity: "Two")]))
-
-    }
 }

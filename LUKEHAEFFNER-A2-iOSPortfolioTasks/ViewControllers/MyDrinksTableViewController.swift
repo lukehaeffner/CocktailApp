@@ -8,26 +8,31 @@
 
 import UIKit
 
-class MyDrinksTableViewController: UITableViewController, addCocktailDelegate {
-
+class MyDrinksTableViewController: UITableViewController, DatabaseListener {
     let CELL_DRINK = "drinkCell"
     let CELL_INFO = "drinkCountCell"
     let SECTION_DRINK = 0
     let SECTION_INFO = 1
     var currentDrinks: [Cocktail] = []
+    weak var databaseController: DatabaseProtocol?
+    var listenerType: ListenerType = .all
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        databaseController = appDelegate.databaseController
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        databaseController?.addListener(listener: self)
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        databaseController?.removeListener(listener: self)
+    }
     // MARK: - Table view data source
-
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
@@ -43,29 +48,27 @@ class MyDrinksTableViewController: UITableViewController, addCocktailDelegate {
         }
     }
 
-    // different cell information
+    // This is for the rows in the table view
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
- 
+        
+        // This is for each drink thats in the CoreData, display its information
         if indexPath.section == SECTION_DRINK {
             let drinkCell = tableView.dequeueReusableCell(withIdentifier: CELL_DRINK, for: indexPath)
-            as! MyDrinksTableViewCell
+                as! MyDrinksTableViewCell
             let drink = currentDrinks[indexPath.row]
-
             drinkCell.drinkLabel.text = drink.name
             drinkCell.ingredientsLabel.text = drink.instructions
-
             return drinkCell
         }
-
+        // For the Drink Count section
         let cell = tableView.dequeueReusableCell(withIdentifier: CELL_INFO, for: indexPath)
         cell.textLabel?.textColor = .secondaryLabel
         cell.selectionStyle = .none
         if currentDrinks.count > 0 {
             cell.textLabel?.text = "\(currentDrinks.count) drinks in list"
         } else {
-        cell.textLabel?.text = "No drinks added. Click + to add drink"
+            cell.textLabel?.text = "No drinks added. Click + to add drink"
         }
-        
         return cell
     }
     
@@ -78,47 +81,30 @@ class MyDrinksTableViewController: UITableViewController, addCocktailDelegate {
         }
         return false
     }
-    
 
     
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete && indexPath.section == SECTION_DRINK {
-            tableView.performBatchUpdates({
-                self.currentDrinks.remove(at: indexPath.row)
-                tableView.deleteRows(at: [indexPath], with: .automatic)
-            }, completion: nil)
+            self.databaseController!.removeCocktail(cocktail: currentDrinks[indexPath.row])
         }
     }
-    
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
 
     
+    // MARK: - Database Listener
+    func onMyCocktailsChange(change: DatabaseChange, myCocktails: [Cocktail]) {
+        currentDrinks = myCocktails
+        tableView.reloadData()
+    }
+    
+    // Unused for this view controller
+    func onIngredientsChange(change: DatabaseChange, ingredients: [Ingredient]) {}
+    func onIngredientMeasurementChange(change: DatabaseChange, ingredients: [IngredientMeasurement]) {}
+    func onNameChange(change: DatabaseChange, cocktail: Cocktail) {}
     // MARK: - Navigation
-
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-        if segue.identifier == "searchCocktailSegue" {
-            let destination = segue.destination as! SearchDrinksTableViewController
-            destination.cocktailDelegate = self
-        }
-        
+    
         if segue.identifier == "showCocktailSegue" , let cell = sender as? MyDrinksTableViewCell{
             if let indexPath = tableView.indexPath(for: cell) {
                 let destination = segue.destination as! CreateDrinkTableViewController
@@ -129,11 +115,4 @@ class MyDrinksTableViewController: UITableViewController, addCocktailDelegate {
     }
     
 
-    func addCocktail(newCocktail: Cocktail) -> Bool {
-        tableView.performBatchUpdates({
-            currentDrinks.append(newCocktail)
-            tableView.insertRows(at: [IndexPath(row: currentDrinks.count - 1, section: SECTION_DRINK)], with: .automatic)
-        }, completion: nil)
-        return true
-    }
 }
