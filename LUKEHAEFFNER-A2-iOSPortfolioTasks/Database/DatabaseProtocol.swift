@@ -25,9 +25,7 @@ protocol DatabaseListener: AnyObject {
 }
 
 protocol DatabaseProtocol: AnyObject {
-    
     func cleanup()
-    
     func addCocktail(name: String, instructions: String) -> Cocktail
     func addIngredient(name: String) -> Ingredient
     func addIngredientMeasurement(cocktail: Cocktail, ingredientName: String, measurement: String) -> IngredientMeasurement
@@ -43,7 +41,8 @@ protocol DatabaseProtocol: AnyObject {
     func removeIngredientFromCocktail(cocktail: Cocktail, ingredientMeasurement: IngredientMeasurement)
     func removeCocktail(cocktail: Cocktail)
     func fetchAllIngredients() -> [Ingredient]
-    
+    func fetchIngredientByName(ingredientName: String) -> [Ingredient] 
+
     func addListener(listener: DatabaseListener)
     func removeListener(listener: DatabaseListener)
 }

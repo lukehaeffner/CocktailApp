@@ -9,7 +9,6 @@
 import UIKit
 
 class CreateDrinkTableViewController: UITableViewController, DatabaseListener {
-    
     let SECTION_NAME = 0
     let SECTION_INSTRUCTIONS = 1
     let SECTION_INGREDIENTS = 2
@@ -29,8 +28,10 @@ class CreateDrinkTableViewController: UITableViewController, DatabaseListener {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         databaseController = appDelegate.databaseController
         if chosenCocktail == nil {
+            self.navigationItem.title = "Create Cocktail"
             chosenCocktail = databaseController?.createEmptyCocktail()
         } else {
+            self.navigationItem.title = "Edit Cocktail"
             chosenCocktail = databaseController?.editCocktail(cocktail: chosenCocktail!)
         }
     }
@@ -140,12 +141,6 @@ class CreateDrinkTableViewController: UITableViewController, DatabaseListener {
 
         // create a real cocktail in the parent context
         let _ = databaseController?.editSaveCocktail(cocktail: chosenCocktail)
-        
-        // add every ingredient from the child context to the real cocktail
-//        chosenCocktail.ingredients?.forEach {
-//            let ingredient = $0 as! IngredientMeasurement
-//            let _ = databaseController?.addIngredientMeasurement(cocktail: cocktail!, ingredientName: ingredient.name!, measurement: ingredient.quantity!)
-//        }
         navigationController?.popViewController(animated: true)
         return
     }
@@ -156,23 +151,27 @@ class CreateDrinkTableViewController: UITableViewController, DatabaseListener {
         tableView.reloadData()
     }
     func onIngredientsChange(change: DatabaseChange, ingredients: [Ingredient]) {}
-    
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // adding ingredients
         if segue.identifier == "showIngredientsSegue" {
             let destination = segue.destination as! AddIngredientViewController
             destination.cocktail = self.chosenCocktail
+            destination.databaseController = self.databaseController
+
         }
         // editing name
         if segue.identifier == "editNameSegue" {
             let destination = segue.destination as! EditCocktailViewController
             destination.cocktail = self.chosenCocktail
+            destination.databaseController = self.databaseController
+
         }
         // editing instructions
         if segue.identifier == "editInstructionSegue" {
             let destination = segue.destination as! EditDescriptionViewController
             destination.cocktail = self.chosenCocktail
+            destination.databaseController = self.databaseController
         }
     }
 }

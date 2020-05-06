@@ -21,7 +21,6 @@ class MyDrinksTableViewController: UITableViewController, DatabaseListener {
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         databaseController = appDelegate.databaseController
-
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

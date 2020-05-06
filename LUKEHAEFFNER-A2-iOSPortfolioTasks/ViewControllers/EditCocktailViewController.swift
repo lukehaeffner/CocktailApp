@@ -12,37 +12,35 @@ class EditCocktailViewController: UIViewController {
 
     @IBOutlet weak var headerLabel: UILabel!
     @IBOutlet weak var editTextField: UITextField!
-    weak var databaseController: DatabaseProtocol?
+    var databaseController: DatabaseProtocol!
     var cocktail: Cocktail!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        databaseController = appDelegate.databaseController
         editTextField.text = cocktail.name
     }
     
-
     @IBAction func saveName(_ sender: Any) {
         if editTextField.text != "" {
             let name =  editTextField.text!
-            cocktail.name = name
-//            let _ = databaseController?.editCocktailName(cocktail: cocktail!, name: name)
+            let _ = databaseController.editCocktailName(cocktail: cocktail!, name: name)
             navigationController?.popViewController(animated: true)
             return
         }
-        
-        
+        displayMessage(title: "Missing fields", message: "A name must be provided for the drink")
     }
-    /*
-    // MARK: - Navigation
-*/
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//
-//        // Get the new view controller using segue.destination.
-//        // Pass the selected object to the new view controller.
-//    }
-    
+    /**
+     Display an error message to the user when a field isn't correctly filled in
+     - Parameters:
+        - title: The title of the error message
+        - message: The message in the body of the error message
+     */
+    func displayMessage(title: String, message: String) {
+        let alertController = UIAlertController(title: title, message: message,
+        preferredStyle: UIAlertController.Style.alert)
+        alertController.addAction(UIAlertAction(title: "Dismiss", style:
+        UIAlertAction.Style.default,handler: nil))
+        self.present(alertController, animated: true, completion: nil)
+    }
 
 }

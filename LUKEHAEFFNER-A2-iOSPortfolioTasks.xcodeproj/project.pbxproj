@@ -11,7 +11,6 @@
 		C631D59A243DA83200878759 /* CreateDrinkTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C631D599243DA83200878759 /* CreateDrinkTableViewController.swift */; };
 		C631D59C243DAF3700878759 /* MyDrinksTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C631D59B243DAF3700878759 /* MyDrinksTableViewCell.swift */; };
 		C631D59E24442E6500878759 /* SearchDrinksTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C631D59D24442E6500878759 /* SearchDrinksTableViewController.swift */; };
-		C631D5A0244434F000878759 /* AddCocktailDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C631D59F244434F000878759 /* AddCocktailDelegate.swift */; };
 		C65B66E524530BAF003990EE /* EditDescriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C65B66E424530BAF003990EE /* EditDescriptionViewController.swift */; };
 		C68A29542444865400C2D1CB /* EditCocktailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68A29532444865400C2D1CB /* EditCocktailViewController.swift */; };
 		C68A295C2446E43500C2D1CB /* Cocktail+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = C68A29562446E43500C2D1CB /* Cocktail+CoreDataClass.swift */; };
@@ -42,7 +41,6 @@
 		C631D599243DA83200878759 /* CreateDrinkTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateDrinkTableViewController.swift; sourceTree = "<group>"; };
 		C631D59B243DAF3700878759 /* MyDrinksTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyDrinksTableViewCell.swift; sourceTree = "<group>"; };
 		C631D59D24442E6500878759 /* SearchDrinksTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchDrinksTableViewController.swift; sourceTree = "<group>"; };
-		C631D59F244434F000878759 /* AddCocktailDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCocktailDelegate.swift; sourceTree = "<group>"; };
 		C65B66E424530BAF003990EE /* EditDescriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDescriptionViewController.swift; sourceTree = "<group>"; };
 		C68A29532444865400C2D1CB /* EditCocktailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditCocktailViewController.swift; sourceTree = "<group>"; };
 		C68A29562446E43500C2D1CB /* Cocktail+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Cocktail+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -160,7 +158,6 @@
 				C6D3B4BF243D9A3700AB353A /* LaunchScreen.storyboard */,
 				C6D3B4C2243D9A3700AB353A /* Info.plist */,
 				C6D3B4BA243D9A3200AB353A /* LUKEHAEFFNER_A2_iOSPortfolioTasks.xcdatamodeld */,
-				C631D59F244434F000878759 /* AddCocktailDelegate.swift */,
 			);
 			path = "LUKEHAEFFNER-A2-iOSPortfolioTasks";
 			sourceTree = "<group>";
@@ -246,7 +243,6 @@
 				C6B8695A2452DDD200601F15 /* AddIngredientViewController.swift in Sources */,
 				C631D59C243DAF3700878759 /* MyDrinksTableViewCell.swift in Sources */,
 				C6B869562452BBAF00601F15 /* IngredientData.swift in Sources */,
-				C631D5A0244434F000878759 /* AddCocktailDelegate.swift in Sources */,
 				C6B869582452BCEE00601F15 /* DefaultIngredients.swift in Sources */,
 				C68A295D2446E43500C2D1CB /* Cocktail+CoreDataProperties.swift in Sources */,
 				C631D598243DA7F500878759 /* MyDrinksTableViewController.swift in Sources */,

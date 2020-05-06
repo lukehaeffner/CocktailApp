@@ -8,23 +8,7 @@
 
 import UIKit
 
-class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate , DatabaseListener {
-    func onNameChange(change: DatabaseChange, cocktail: Cocktail) {
-        // do nothing
-    }
-    
-    func onMyCocktailsChange(change: DatabaseChange, myCocktails: [Cocktail]) {
-//
-    }
-    
-    func onIngredientsChange(change: DatabaseChange, ingredients: [Ingredient]) {
-        // do nothing
-    }
-    
-    func onIngredientMeasurementChange(change: DatabaseChange, ingredients: [IngredientMeasurement]) {
-        // do nothing
-    }
-
+class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate  {
     let CELL_DRINK = "drinkCell"
     let CELL_RESULTS = "drinkCountCell"
 
@@ -42,36 +26,20 @@ class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         databaseController = appDelegate.databaseController
         let searchController = UISearchController(searchResultsController: nil)
-           searchController.searchBar.delegate = self
-           searchController.obscuresBackgroundDuringPresentation = false
-           searchController.searchBar.placeholder = "Find drink"
-           navigationItem.searchController = searchController
-           // Make sure search bar is always visible.
-           navigationItem.hidesSearchBarWhenScrolling = false
-
-           // This view controller decides how the search controller is presented.
-           definesPresentationContext = true
+        searchController.searchBar.delegate = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Find drink"
+        navigationItem.searchController = searchController
+        // Make sure search bar is always visible.
+        navigationItem.hidesSearchBarWhenScrolling = false
+        // This view controller decides how the search controller is presented.
+        definesPresentationContext = true
 
            // Create a loading animation
-           indicator.style = UIActivityIndicatorView.Style.medium
-           indicator.center = self.tableView.center
-           self.view.addSubview(indicator)
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        indicator.style = UIActivityIndicatorView.Style.medium
+        indicator.center = self.tableView.center
+        self.view.addSubview(indicator)
     }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        databaseController?.addListener(listener: self)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        databaseController?.removeListener(listener: self)
-    }
-    
     
     //MARK: Search Bar Delegate
      func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -79,10 +47,8 @@ class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate
          guard let searchText = searchBar.text, searchText.count > 0 else {
              return;
          }
-
          indicator.startAnimating()
          indicator.backgroundColor = UIColor.clear
-
          newDrinks.removeAll()
          tableView.reloadData()
          URLSession.shared.invalidateAndCancel()
@@ -90,12 +56,9 @@ class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate
      }
     
     // MARK: - API Request
-    
     func requestDrinks(drinkName: String) {
         let searchString = REQUEST_STRING + drinkName
-        
         let jsonURL = URL(string: searchString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)
-        
         let task = URLSession.shared.dataTask(with: jsonURL!){(data, response, error) in
             DispatchQueue.main.async{
                 self.indicator.stopAnimating()
@@ -109,7 +72,6 @@ class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate
             do {
                 let decoder = JSONDecoder()
                 let volumeData = try decoder.decode(VolumeData.self, from: data!)
-
                 if let books = volumeData.books {
                     self.newDrinks.append(contentsOf: books)
                     DispatchQueue.main.async {
@@ -123,7 +85,6 @@ class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate
         task.resume()
     }
     // MARK: - Table view data source
-
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
@@ -141,8 +102,6 @@ class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate
                 return 0
         }
     }
-
-    
     
     // this is the drink cells
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -153,81 +112,31 @@ class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate
             drinkCell.ingredientsLabel.text = drink.instructions
             return drinkCell
         }
-
            let cell = tableView.dequeueReusableCell(withIdentifier: CELL_RESULTS, for: indexPath)
            cell.textLabel?.textColor = .secondaryLabel
-           cell.textLabel?.text = "No drinks added. Click to add drink" // this is for if the search returns 0
+           cell.textLabel?.text = "No drinks Found. Click to add drink" // this is for if the search returns 0
            
            return cell
     }
     
+    // when the cocktail is clicked
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == SECTION_INFO {
             tableView.deselectRow(at: indexPath, animated: false)
             return
         }
         
+        // add the cocktail to the database
         let cocktail = databaseController?.addCocktail(name: newDrinks[indexPath.row].name, instructions: newDrinks[indexPath.row].instructions)
         let ingredients = newDrinks[indexPath.row].ingredients
         let measurements = newDrinks[indexPath.row].ingredientMeasurement
-        for n in 0...newDrinks[indexPath.row].ingredientMeasurement.count - 1 {
-            let _ = databaseController?.addIngredientMeasurement(cocktail: cocktail!, ingredientName: ingredients[n], measurement: measurements[n])
-        }
         
+        // given the generated cocktail, use the delegate to add ingredients
+        for n in 0...newDrinks[indexPath.row].ingredients.count - 1 {
+            let measurement = (n >= measurements.count ? "N/A" : measurements[n]) // some ingredients don't have measurements, so replace with n/a if no ingredient provided
+            let _ = databaseController?.addIngredientMeasurement(cocktail: cocktail!, ingredientName: ingredients[n], measurement: measurement)
+        }
         navigationController?.popViewController(animated: false)
         return
-   
-//        if databaseController?.addCocktail(name: newDrinks[indexPath.row].name, instructions: newDrinks[indexPath.row].instructions) != nil {
-//            navigationController?.popViewController(animated: false)
-//            return
-//        }
-
-//        tableView.deselectRow(at: indexPath, animated: true)
     }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-    
 }
