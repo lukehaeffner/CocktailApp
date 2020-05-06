@@ -8,7 +8,7 @@
 
 import UIKit
 
-class EditDescriptionViewController: UIViewController {
+class EditDescriptionViewController: UIViewController, UITextViewDelegate {
 
     @IBOutlet weak var editInstructions: UITextView!
     var databaseController: DatabaseProtocol!
@@ -24,10 +24,34 @@ class EditDescriptionViewController: UIViewController {
         
         displayMessage(title: "Missing Fields", message: "Instructions for the cocktail must be provided")
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        editInstructions.text = cocktail.instructions
+        
+        /**
+        Placeholder text for the edit text. If the cocktail doesnt have instructions, set the text to grey like placeholder, and set the placeholder text
+         */
+        if cocktail.instructions == nil {
+            editInstructions.delegate = self
+            editInstructions.textColor = .lightGray
+            editInstructions.text = "Insert Instructions..."
+        }
+        else {
+            editInstructions.text = cocktail.instructions
+        }
     }
+    
+    /**
+     This is to setup a bit of a placeholder text for the TextField to make it a bit clearer to the user that they can input
+     Text in that field. This plays a trick on the fact that the only text that should be lightGrey is when its set initially to make a fake placeholder text
+     */
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == .lightGray {
+            textView.text = nil
+            textView.textColor = .black
+        }
+    }
+    
     /**
      Display an error message to the user when a field isn't correctly filled in
      - Parameters:

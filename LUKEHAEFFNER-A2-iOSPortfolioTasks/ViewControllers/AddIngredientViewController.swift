@@ -8,15 +8,52 @@
 
 import UIKit
 
-class AddIngredientViewController: UIViewController {
+class AddIngredientViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource, UITextFieldDelegate {
 
-    @IBOutlet weak var ingredientPicker: UIPickerView!
     var databaseController: DatabaseProtocol!
     var ingredient: String!
     var ingredients:[Ingredient] = []
     var strIngredients:[String] = []
     @IBOutlet weak var qtyEditText: UITextField!
     var cocktail: Cocktail!
+    @IBOutlet weak var editSelectedIngredient: UITextField!
+    
+
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        ingredients = databaseController.fetchAllIngredients()
+        self.convertToString()
+        self.editSelectedIngredient.delegate = self
+        setupPickerView()
+        
+        // Do any additional setup after loading the view.
+    }
+    
+    /**
+     Initialize the pickerview. This sets the editSelectedIngredient inputview to display the pickerview when clicked
+     */
+    func setupPickerView() {
+        let pickerView = UIPickerView()
+        pickerView.delegate = self
+        editSelectedIngredient.inputView = pickerView
+    }
+    
+    /**
+     This is the delegrate responsible for disallowing manual keyboard entry into the ingredient textfield
+     */
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        return false
+    }
+ 
+    /**
+     Convert all Ingredient class items to a list of strings to display in the UIPicker
+     */
+    func convertToString() {
+        for ingredient in ingredients {
+            self.strIngredients.append(ingredient.name!)
+        }
+    }
     
     @IBAction func addIngredient(_ sender: Any) {
         let measurement = qtyEditText.text
@@ -33,6 +70,7 @@ class AddIngredientViewController: UIViewController {
         
         // check if the ingredient is already present in the cocktail.
         // Was meant to use the fully implemented fetchIngredientByName?
+        
         let cocktailIngredients = cocktail.ingredients?.allObjects
         for ingredients in cocktailIngredients as! [IngredientMeasurement]  {
             if ingredients.name! == ingredient {
@@ -43,25 +81,22 @@ class AddIngredientViewController: UIViewController {
         let _ = databaseController.editAddIngredientMeasurement(cocktail: cocktail, ingredientName: ingredient, measurement: measurement!)
         navigationController?.popViewController(animated: true)
     }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        ingredientPicker.dataSource = self
-        ingredientPicker.delegate = self
-        ingredients = databaseController.fetchAllIngredients()
-        self.convertToString()
-        // Do any additional setup after loading the view.
+    //MARK: - PickerView Functions
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
     }
     
-    /**
-     Convert all Ingredient class items to a list of strings to display in the UIPicker
-     */
-    func convertToString() {
-        for ingredient in ingredients {
-            self.strIngredients.append(ingredient.name!)
-        }
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return strIngredients.count
     }
     
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        editSelectedIngredient.text = strIngredients[row]
+        return ingredient = strIngredients[row]
+    }
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return strIngredients[row]
+    }
     /**
      Display an error message to the user when a field isn't correctly filled in
      - Parameters:
@@ -77,24 +112,3 @@ class AddIngredientViewController: UIViewController {
     }
 }
 
-/**
- This is the class responsible for rendering the UIPickerView
- */
-extension AddIngredientViewController: UIPickerViewDelegate, UIPickerViewDataSource {
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return strIngredients.count
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        return ingredient = strIngredients[row]
-    }
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return strIngredients[row]
-    }
-    
-    
-}

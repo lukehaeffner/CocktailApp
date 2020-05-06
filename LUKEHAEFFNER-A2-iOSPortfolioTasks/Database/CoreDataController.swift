@@ -316,8 +316,33 @@ class CoreDataController: NSObject, DatabaseProtocol, NSFetchedResultsController
         return ingredient
     }
     
-
+    func fetchCocktail(cocktailName: String, cocktailInstructions: String) -> [Cocktail]{
+        var cocktail: [Cocktail] = []
+        let cocktailPredicate = NSPredicate(format: "name == %@ AND instructions == %@", cocktailName, cocktailInstructions)
+        let fetchRequest: NSFetchRequest<Cocktail> = Cocktail.fetchRequest()
+        fetchRequest.predicate = cocktailPredicate
+        do {
+            try cocktail = persistentContainer.viewContext.fetch(fetchRequest) as [Cocktail]
+        } catch {
+            print("Fetch Failed")
+        }
+        return cocktail
+    }
     
+    func fetchCocktailByName(cocktailName: String) -> [Cocktail] {
+        var cocktail: [Cocktail] = []
+        let cocktailPredicate = NSPredicate(format: "name == %@", cocktailName)
+        let fetchRequest: NSFetchRequest<Cocktail> = Cocktail.fetchRequest()
+        fetchRequest.predicate = cocktailPredicate
+        do {
+            try cocktail = persistentContainer.viewContext.fetch(fetchRequest) as [Cocktail]
+        } catch {
+            print("Fetch Failed")
+        }
+        return cocktail
+    }
+
+        
     // MARK: - Get Default Ingredients
     /**
      Create a set of default ingredients that will only run on initial launch

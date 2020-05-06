@@ -65,6 +65,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return container
     }()
 
+    func showMessage() {
+        
+    }
+    
     // MARK: - Core Data Saving support
 
     func saveContext () {

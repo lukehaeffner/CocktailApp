@@ -194,12 +194,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="ApV-7O-p1T">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ApV-7O-p1T">
                                 <rect key="frame" x="20" y="139" width="374" height="319"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                <mutableString key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</mutableString>
                                 <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Edit Instructions" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IEh-TH-2Cc">
@@ -253,11 +253,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oGf-Ui-p85">
-                                <rect key="frame" x="5" y="98" width="404" height="216"/>
-                            </pickerView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="N8n-f7-cmp">
-                                <rect key="frame" x="20" y="439" width="374" height="30"/>
+                                <rect key="frame" x="20" y="318" width="374" height="30"/>
                                 <color key="backgroundColor" systemColor="linkColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <state key="normal" title="Add Ingredient To Cocktail">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -267,37 +264,51 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Quantity" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d9n-eC-UsH">
-                                <rect key="frame" x="20" y="334" width="374" height="21"/>
+                                <rect key="frame" x="20" y="213" width="374" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="B34-SK-bpy">
-                                <rect key="frame" x="20" y="365" width="374" height="34"/>
+                                <rect key="frame" x="20" y="244" width="374" height="34"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Ingredient" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="j1J-tX-Mud">
+                                <rect key="frame" x="20" y="108" width="374" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VpV-wl-uhh">
+                                <rect key="frame" x="20" y="139" width="374" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="B34-SK-bpy" firstAttribute="top" secondItem="d9n-eC-UsH" secondAttribute="bottom" constant="10" id="1ze-42-Vmy"/>
-                            <constraint firstItem="fUj-k8-lwv" firstAttribute="trailing" secondItem="N8n-f7-cmp" secondAttribute="trailing" constant="20" id="Kbc-1J-wzu"/>
-                            <constraint firstItem="B34-SK-bpy" firstAttribute="leading" secondItem="fUj-k8-lwv" secondAttribute="leading" constant="20" id="LRl-AR-LBH"/>
-                            <constraint firstItem="d9n-eC-UsH" firstAttribute="leading" secondItem="fUj-k8-lwv" secondAttribute="leading" constant="20" id="Mq7-eZ-LHm"/>
-                            <constraint firstItem="fUj-k8-lwv" firstAttribute="trailing" secondItem="d9n-eC-UsH" secondAttribute="trailing" constant="20" id="Nfw-Mc-ZCo"/>
-                            <constraint firstItem="d9n-eC-UsH" firstAttribute="top" secondItem="oGf-Ui-p85" secondAttribute="bottom" constant="20" id="U0t-4I-y3g"/>
-                            <constraint firstItem="fUj-k8-lwv" firstAttribute="trailing" secondItem="oGf-Ui-p85" secondAttribute="trailing" constant="5" id="WXh-h9-FRh"/>
-                            <constraint firstItem="N8n-f7-cmp" firstAttribute="top" secondItem="B34-SK-bpy" secondAttribute="bottom" constant="40" id="Yc7-Po-W9Q"/>
-                            <constraint firstItem="oGf-Ui-p85" firstAttribute="top" secondItem="fUj-k8-lwv" secondAttribute="top" constant="10" id="m0a-X4-6IM"/>
-                            <constraint firstItem="oGf-Ui-p85" firstAttribute="leading" secondItem="fUj-k8-lwv" secondAttribute="leading" constant="5" id="mq1-lc-Qq5"/>
-                            <constraint firstItem="fUj-k8-lwv" firstAttribute="trailing" secondItem="B34-SK-bpy" secondAttribute="trailing" constant="20" id="nC1-2k-iFj"/>
-                            <constraint firstItem="N8n-f7-cmp" firstAttribute="leading" secondItem="fUj-k8-lwv" secondAttribute="leading" constant="20" id="oQs-yx-a0M"/>
+                            <constraint firstItem="j1J-tX-Mud" firstAttribute="leading" secondItem="fUj-k8-lwv" secondAttribute="leading" constant="20" id="1yB-CN-IaL"/>
+                            <constraint firstItem="fUj-k8-lwv" firstAttribute="trailing" secondItem="N8n-f7-cmp" secondAttribute="trailing" constant="20" id="8kX-jj-bLU"/>
+                            <constraint firstItem="VpV-wl-uhh" firstAttribute="top" secondItem="j1J-tX-Mud" secondAttribute="bottom" constant="10" id="9Og-mk-NY8"/>
+                            <constraint firstItem="fUj-k8-lwv" firstAttribute="trailing" secondItem="B34-SK-bpy" secondAttribute="trailing" constant="20" id="H8G-KV-tY2"/>
+                            <constraint firstItem="d9n-eC-UsH" firstAttribute="leading" secondItem="fUj-k8-lwv" secondAttribute="leading" constant="20" id="Hql-91-iLm"/>
+                            <constraint firstItem="N8n-f7-cmp" firstAttribute="leading" secondItem="fUj-k8-lwv" secondAttribute="leading" constant="20" id="Kei-FZ-3Sk"/>
+                            <constraint firstItem="N8n-f7-cmp" firstAttribute="top" secondItem="B34-SK-bpy" secondAttribute="bottom" constant="40" id="Opn-vz-S2y"/>
+                            <constraint firstItem="fUj-k8-lwv" firstAttribute="trailing" secondItem="VpV-wl-uhh" secondAttribute="trailing" constant="20" id="PZU-Lg-kMf"/>
+                            <constraint firstItem="B34-SK-bpy" firstAttribute="leading" secondItem="fUj-k8-lwv" secondAttribute="leading" constant="20" id="R4g-kM-DyN"/>
+                            <constraint firstItem="B34-SK-bpy" firstAttribute="top" secondItem="d9n-eC-UsH" secondAttribute="bottom" constant="10" id="j4d-96-tap"/>
+                            <constraint firstItem="fUj-k8-lwv" firstAttribute="trailing" secondItem="j1J-tX-Mud" secondAttribute="trailing" constant="20" id="oC9-Zo-kE8"/>
+                            <constraint firstItem="d9n-eC-UsH" firstAttribute="top" secondItem="VpV-wl-uhh" secondAttribute="bottom" constant="40" id="qKU-dK-SPX"/>
+                            <constraint firstItem="fUj-k8-lwv" firstAttribute="trailing" secondItem="d9n-eC-UsH" secondAttribute="trailing" constant="20" id="roK-1k-GET"/>
+                            <constraint firstItem="j1J-tX-Mud" firstAttribute="top" secondItem="fUj-k8-lwv" secondAttribute="top" constant="20" id="s7t-jx-nyt"/>
+                            <constraint firstItem="VpV-wl-uhh" firstAttribute="leading" secondItem="fUj-k8-lwv" secondAttribute="leading" constant="20" id="tP0-Ez-3QW"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="fUj-k8-lwv"/>
                     </view>
                     <navigationItem key="navigationItem" title="Add Ingredient" id="ecu-IU-fDV"/>
                     <connections>
-                        <outlet property="ingredientPicker" destination="oGf-Ui-p85" id="vat-cE-M7s"/>
+                        <outlet property="editSelectedIngredient" destination="VpV-wl-uhh" id="yK4-FW-2PZ"/>
                         <outlet property="qtyEditText" destination="B34-SK-bpy" id="TKo-5z-OI6"/>
                     </connections>
                 </viewController>

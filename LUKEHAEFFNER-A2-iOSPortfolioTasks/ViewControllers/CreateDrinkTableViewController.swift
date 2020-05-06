@@ -136,9 +136,15 @@ class CreateDrinkTableViewController: UITableViewController, DatabaseListener {
     // MARK: - Save Cocktail
     @IBAction func saveDrink(_ sender: Any) {
         if chosenCocktail.name == nil || chosenCocktail.instructions == nil || chosenCocktail.ingredients?.count == 0 {
+            displayMessage(title: "Missing Fields", message: "A cocktail must contain a name, some instructions and an ingredient")
             return
         }
 
+        let nameDoesExist = databaseController?.fetchCocktailByName(cocktailName: chosenCocktail.name!)
+        if nameDoesExist!.count > 0  {
+            displayMessage(title: "Duplicate Name", message: "A cocktail with this name already exists in your list.")
+            return
+        }
         // create a real cocktail in the parent context
         let _ = databaseController?.editSaveCocktail(cocktail: chosenCocktail)
         navigationController?.popViewController(animated: true)
@@ -173,5 +179,19 @@ class CreateDrinkTableViewController: UITableViewController, DatabaseListener {
             destination.cocktail = self.chosenCocktail
             destination.databaseController = self.databaseController
         }
+    }
+    
+    /**
+     Display an error message to the user when a field isn't correctly filled in
+     - Parameters:
+        - title: The title of the error message
+        - message: The message in the body of the error message
+     */
+    func displayMessage(title: String, message: String) {
+        let alertController = UIAlertController(title: title, message: message,
+        preferredStyle: UIAlertController.Style.alert)
+        alertController.addAction(UIAlertAction(title: "Dismiss", style:
+        UIAlertAction.Style.default,handler: nil))
+        self.present(alertController, animated: true, completion: nil)
     }
 }

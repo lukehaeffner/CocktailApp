@@ -17,6 +17,7 @@ class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate
     var indicator = UIActivityIndicatorView()
 
     weak var databaseController: DatabaseProtocol?
+
     var listenerType: ListenerType = .all
     var newDrinks = [DrinkData]()
     let REQUEST_STRING = "https://www.thecocktaildb.com/api/json/v1/1/search.php?s="
@@ -25,6 +26,8 @@ class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate
         super.viewDidLoad()
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         databaseController = appDelegate.databaseController
+        
+        // searchbar
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.delegate = self
         searchController.obscuresBackgroundDuringPresentation = false
@@ -112,9 +115,10 @@ class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate
             drinkCell.ingredientsLabel.text = drink.instructions
             return drinkCell
         }
+        
            let cell = tableView.dequeueReusableCell(withIdentifier: CELL_RESULTS, for: indexPath)
            cell.textLabel?.textColor = .secondaryLabel
-           cell.textLabel?.text = "No drinks Found. Click to add drink" // this is for if the search returns 0
+           cell.textLabel?.text = "Click to add drink" // this is for if the search returns 0
            
            return cell
     }
@@ -126,10 +130,19 @@ class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate
             return
         }
         
+        let selectedCocktail = newDrinks[indexPath.row]
+        
+        let doesExist = databaseController?.fetchCocktail(cocktailName: selectedCocktail.name, cocktailInstructions: selectedCocktail.instructions)
+        if doesExist!.count > 0 {
+            displayMessage(title: "Duplicate Drink", message: "A drink with the same name and instructions already exists in your list")
+            tableView.deselectRow(at: indexPath, animated: true)
+            return
+        }
+        
         // add the cocktail to the database
         let cocktail = databaseController?.addCocktail(name: newDrinks[indexPath.row].name, instructions: newDrinks[indexPath.row].instructions)
-        let ingredients = newDrinks[indexPath.row].ingredients
-        let measurements = newDrinks[indexPath.row].ingredientMeasurement
+        let ingredients = selectedCocktail.ingredients
+        let measurements = selectedCocktail.ingredientMeasurement
         
         // given the generated cocktail, use the delegate to add ingredients
         for n in 0...newDrinks[indexPath.row].ingredients.count - 1 {
@@ -138,5 +151,18 @@ class SearchDrinksTableViewController: UITableViewController,UISearchBarDelegate
         }
         navigationController?.popViewController(animated: false)
         return
+    }
+    
+     /**Display an error message to the user when a field isn't correctly filled in
+     - Parameters:
+        - title: The title of the error message
+        - message: The message in the body of the error message
+     */
+    func displayMessage(title: String, message: String) {
+        let alertController = UIAlertController(title: title, message: message,
+        preferredStyle: UIAlertController.Style.alert)
+        alertController.addAction(UIAlertAction(title: "Dismiss", style:
+        UIAlertAction.Style.default,handler: nil))
+        self.present(alertController, animated: true, completion: nil)
     }
 }
