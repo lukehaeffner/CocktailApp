@@ -140,11 +140,7 @@ class CreateDrinkTableViewController: UITableViewController, DatabaseListener {
             return
         }
 
-        let nameDoesExist = databaseController?.fetchCocktailByName(cocktailName: chosenCocktail.name!)
-        if nameDoesExist!.count > 0  {
-            displayMessage(title: "Duplicate Name", message: "A cocktail with this name already exists in your list.")
-            return
-        }
+
         // create a real cocktail in the parent context
         let _ = databaseController?.editSaveCocktail(cocktail: chosenCocktail)
         navigationController?.popViewController(animated: true)
